@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pump.fun – New Tokens (Retro + Filtres + Copycat Studio)</title>
+<style>
+  :root{
+    --desktop:#008080; --win-face:#c0c0c0; --win-light:#ffffff; --win-highlight:#dfdfdf;
+    --win-shadow:#808080; --win-dark:#404040; --text:#000; --title-blue:#000080;
+    --title-blue-light:#3a6ea5; --title-text:#fff; --btn-face:#e0e0e0; --btn-press:#d0d0d0; --link:#0000ee;
+  }
+  html,body{height:100%}
+  body{background:var(--desktop);margin:0;color:var(--text);font:13px "Tahoma","MS Sans Serif","Segoe UI",sans-serif;}
+  .win{width:min(960px,96vw);margin:18px auto;background:var(--win-face);
+       box-shadow:1px 1px 0 var(--win-light),-1px -1px 0 var(--win-dark),-2px -2px 0 var(--win-shadow),2px 2px 0 var(--win-highlight);
+       border:2px solid var(--win-shadow);}
+  .titlebar{background:linear-gradient(90deg,var(--title-blue),var(--title-blue-light));color:var(--title-text);
+            padding:4px 8px;display:flex;align-items:center;gap:8px;font-weight:bold;}
+  .titlebar .dot{width:12px;height:12px;background:#ffcc00;border:1px solid #000;box-shadow:inset 1px 1px 0 rgba(0,0,0,.2)}
+  .title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .controls{display:flex;gap:4px}
+  .ctrl{width:18px;height:18px;background:var(--win-face);
+        box-shadow:inset -1px -1px 0 var(--win-dark),inset 1px 1px 0 var(--win-light);
+        display:grid;place-items:center;border:1px solid var(--win-shadow);cursor:default}
+  .ctrl:active{box-shadow:inset 1px 1px 0 var(--win-dark),inset -1px -1px 0 var(--win-light);background:var(--btn-press)}
+  .content{padding:10px}
+  .group{border:1px solid var(--win-dark);background:var(--win-face);padding:8px;margin-top:8px;
+         box-shadow:inset 1px 1px 0 var(--win-light),inset -1px -1px 0 var(--win-shadow)}
+  .label{font-weight:bold;margin-bottom:6px}
+  .btn{background:var(--btn-face);border:1px solid var(--win-dark);
+       box-shadow:inset 1px 1px 0 var(--win-light),inset -1px -1px 0 var(--win-shadow);
+       padding:4px 10px;cursor:default;user-select:none}
+  .btn:active{box-shadow:inset -1px -1px 0 var(--win-light),inset 1px 1px 0 var(--win-shadow);background:var(--btn-press)}
+  .pill{display:inline-block;padding:2px 6px;margin-right:6px;margin-top:2px;background:#f3f3f3;border:1px solid var(--win-dark);
+        box-shadow:inset 1px 1px 0 var(--win-light),inset -1px -1px 0 var(--win-shadow);font-size:12px}
+  .row{display:flex;align-items:center;gap:10px;padding:6px;border:1px solid var(--win-dark);background:var(--win-face);
+       box-shadow:inset 1px 1px 0 var(--win-light),inset -1px -1px 0 var(--win-shadow)}
+  .row + .row{margin-top:6px}
+  .token-img{width:32px;height:32px;background:#9f9f9f;image-rendering:pixelated}
+  .titleline{font-weight:bold}
+  .sub{font-size:12px;opacity:.9}
+  .statusbar{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:var(--win-face);
+             border-top:1px solid var(--win-dark);box-shadow:inset 0 1px 0 var(--win-light);font-size:12px}
+  pre{white-space:pre-wrap;word-break:break-word;font-size:12px;background:#efefef;padding:8px;border:1px solid var(--win-dark)}
+  .grid2{display:grid;grid-template-columns:160px 1fr;gap:8px;align-items:center}
+  input[type="number"], input[type="text"], textarea, select{
+    background:var(--btn-face);border:1px solid var(--win-dark);
+    box-shadow:inset 1px 1px 0 var(--win-light),inset -1px -1px 0 var(--win-shadow);
+    padding:4px;font:13px "Tahoma","MS Sans Serif","Segoe UI",sans-serif;width:100%;
+  }
+  textarea{min-height:90px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:700px){ .cols{grid-template-columns:1fr} }
+  .warn{font-size:12px;color:#700}
+</style>
+</head>
+<body>
+
+<div class="win" role="application">
+  <div class="titlebar">
+    <div class="dot" aria-hidden="true"></div>
+    <div class="title">Pump.fun — New Tokens (Retro)</div>
+    <div class="controls">
+      <div class="ctrl" title="Min">—</div>
+      <div class="ctrl" title="Max">▢</div>
+      <div class="ctrl" title="Close">✕</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Bandeau info + actions -->
+    <div class="group">
+      <div class="label">Info</div>
+      <div id="status">Connecting…</div>
+      <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+        <button id="demo" class="btn">Inject demo</button>
+        <button id="clear" class="btn">Clear list</button>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="group">
+      <div class="label">Filtres</div>
+      <div class="cols">
+        <div class="grid2">
+          <label for="ageSelect">Âge max</label>
+          <select id="ageSelect">
+            <option value="60">&lt; 60 s</option>
+            <option value="120">&lt; 2 min</option>
+            <option value="300">&lt; 5 min</option>
+            <option value="600">&lt; 10 min</option>
+          </select>
+          <label for="mcapMin">Market cap min (SOL)</label>
+          <input id="mcapMin" type="number" step="0.1" min="0" value="0">
+        </div>
+        <div>
+          <div>Résumé: <span id="filtersLabel">Age ≤ 60s • MCAP ≥ 0 SOL</span></div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+            <button id="applyFilters" class="btn">Appliquer</button>
+            <button id="resetFilters" class="btn">Réinitialiser</button>
+            <div id="counters" style="align-self:center">Affichés: <b id="shown">0</b> / Total: <b id="total">0</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="warn" style="margin-top:6px">Astuce: si rien n’apparaît, mets MCAP min à 0 SOL et/ou augmente l’âge max.</div>
+    </div>
+
+    <!-- Flux live -->
+    <div class="group">
+      <div class="label">Live feed</div>
+      <div id="list"></div>
+    </div>
+
+    <!-- Copycat Studio -->
+    <div class="group">
+      <div class="label">Copycat Studio</div>
+      <div class="cols">
+        <div>
+          <div class="grid2">
+            <label>Depuis presse-papiers</label>
+            <button id="pasteBtn" class="btn">Coller</button>
+
+            <label>Ou charger dernier item</label>
+            <button id="loadLast" class="btn">Charger sauvegarde</button>
+
+            <label for="name">Name</label><input id="name" type="text">
+            <label for="symbol">Symbol</label><input id="symbol" type="text">
+            <label for="mint">Mint</label><input id="mint" type="text">
+            <label for="uri">URI</label><input id="uri" type="text">
+            <label for="image">Image URL (auto si dans URI)</label><input id="image" type="text">
+          </div>
+        </div>
+        <div>
+          <div class="grid2">
+            <label for="devBuy">Dev buy (SOL)</label><input id="devBuy" type="number" step="0.1" min="0" value="1">
+            <label for="slip">Slippage (%)</label><input id="slip" type="number" step="1" min="1" value="10">
+            <label for="prio">Priority fee (SOL)</label><input id="prio" type="number" step="0.0001" min="0" value="0.0005">
+          </div>
+          <div class="warn" style="margin-top:6px">⚠️ Le lancement passe par une **fonction Netlify** côté serveur.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px" class="grid2">
+        <label>Payload généré</label>
+        <textarea id="payload" readonly></textarea>
+      </div>
+
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button id="genPayload" class="btn">Generate Payload</button>
+        <button id="copyPayload" class="btn">Copy Payload</button>
+        <button id="tryLaunch" class="btn">Launch (via Netlify)</button>
+      </div>
+    </div>
+
+    <!-- Debug -->
+    <div class="group">
+      <div class="label">Debug</div>
+      <div>Events: <span id="evCount">0</span></div>
+      <div>Last payload brut:</div>
+      <pre id="lastEvent">—</pre>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div>Windows Classic Mode</div>
+    <div id="footerText">—</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const wsUrl = 'wss://pumpportal.fun/api/data';
+
+  const list = document.getElementById('list');
+  const status = document.getElementById('status');
+  const lastEvent = document.getElementById('lastEvent');
+  const evCount = document.getElementById('evCount');
+  const shownEl = document.getElementById('shown');
+  const totalEl = document.getElementById('total');
+  const filtersLabel = document.getElementById('filtersLabel');
+  const footerText = document.getElementById('footerText');
+
+  const ageSelect = document.getElementById('ageSelect');
+  const mcapMin = document.getElementById('mcapMin');
+  const applyFilters = document.getElementById('applyFilters');
+  const resetFilters = document.getElementById('resetFilters');
+
+  const seen = new Set();
+  let count = 0, shown = 0, total = 0;
+
+  const defCfg = { maxAge: 60, minMcapSol: 0 };
+  function loadCfg(){
+    try { return Object.assign({}, defCfg, JSON.parse(localStorage.getItem('copycat_cfg')||'{}')); }
+    catch { return { ...defCfg }; }
+  }
+  function saveCfg(cfg){ localStorage.setItem('copycat_cfg', JSON.stringify(cfg)); updateFiltersUI(); }
+  function updateFiltersUI(){
+    const c = loadCfg();
+    ageSelect.value = String(c.maxAge);
+    mcapMin.value = String(c.minMcapSol);
+    filtersLabel.textContent = `Age ≤ ${c.maxAge}s • MCAP ≥ ${c.minMcapSol} SOL`;
+    footerText.textContent = `Filtre actif — Age ≤ ${c.maxAge}s • MCAP ≥ ${c.minMcapSol} SOL`;
+  }
+  updateFiltersUI();
+  applyFilters.onclick = ()=> saveCfg({ maxAge: parseInt(ageSelect.value,10)||60, minMcapSol: parseFloat(mcapMin.value||'0') });
+  resetFilters.onclick = ()=> saveCfg({ ...defCfg });
+
+  function passFilters(ev){
+    const c = loadCfg();
+    const ts = ev.timestamp ? Number(ev.timestamp)*1000 : Date.now();
+    const age = Math.max(0, Math.round((Date.now()-ts)/1000));
+    const mcapSol = (typeof ev.marketCapSol === 'number' && !isNaN(ev.marketCapSol)) ? ev.marketCapSol : 0;
+    return age <= c.maxAge && mcapSol >= c.minMcapSol;
+  }
+
+  document.getElementById('demo').onclick = () => {
+    onEvent({
+      mint: 'DEMO' + Math.random().toString(36).slice(2,8),
+      name: 'Demo Token', symbol: 'DEMO', uri: '',
+      timestamp: Math.floor(Date.now()/1000),
+      marketCapSol: Math.round(Math.random()*50)
+    });
+  };
+  document.getElementById('clear').onclick = () => { list.innerHTML = ''; shown = 0; seen.clear(); updateCounters(); };
+
+  function updateCounters(){
+    shownEl.textContent = String(shown);
+    totalEl.textContent = String(total);
+  }
+
+  let ws;
+  function connect(){
+    ws = new WebSocket(wsUrl);
+    let ping;
+    ws.onopen = () => {
+      status.textContent = 'Connected – waiting for new tokens…';
+      ws.send(JSON.stringify({ method: 'subscribeNewToken' }));
+      ping = setInterval(()=>{ try{ ws.send(JSON.stringify({method:'ping'})); }catch(e){} }, 20000);
+    };
+    ws.onclose = () => { status.textContent = 'Disconnected. Reconnecting…'; clearInterval(ping); setTimeout(connect, 1500); };
+    ws.onerror = () => { status.textContent = 'Error. Reconnecting…'; try{ ws.close(); }catch(e){} };
+    ws.onmessage = (evt) => {
+      let msg; try { msg = JSON.parse(evt.data); } catch(e){ return; }
+      onEvent(msg?.message || msg?.newToken || msg?.data || (msg?.mint ? msg : null), msg);
+    };
+  }
+  connect();
+
+  function onEvent(ev, raw) {
+    count += 1; evCount.textContent = String(count);
+    if (raw) lastEvent.textContent = JSON.stringify(ev ?? raw, null, 2);
+    if (!ev || !ev.mint) return;
+    total += 1; updateCounters();
+    if (seen.has(ev.mint)) return;
+    seen.add(ev.mint);
+    addRow(ev);
+  }
+
+  async function getImageFromUri(uri){
+    if (!uri) return '';
+    try{
+      const http = uri.startsWith('ipfs://') ? ('https://ipfs.io/ipfs/' + uri.replace('ipfs://','')) : uri;
+      const res = await fetch(http, { cache:'no-store' });
+      if (!res.ok) return '';
+      const meta = await res.json();
+      let img = meta?.image || '';
+      if (img?.startsWith('ipfs://')) img = 'https://ipfs.io/ipfs/' + img.replace('ipfs://','');
+      return img;
+    }catch{ return ''; }
+  }
+
+  function buildCopycatObject(ev, imgUrl = ''){
+    return {
+      name: ev.name || ev.symbol || 'Token',
+      symbol: ev.symbol || '',
+      mint: ev.mint,
+      uri: ev.uri || '',
+      image: imgUrl || ev.image || '',
+      twitter: ev.twitter || '',
+      telegram: ev.telegram || '',
+      website: ev.website || ''
+    };
+  }
+  async function copyCopycat(ev){
+    let img = ev.image || '';
+    if (!img && ev.uri) img = await getImageFromUri(ev.uri);
+    const obj = buildCopycatObject(ev, img);
+    const text = JSON.stringify(obj);
+    try { await navigator.clipboard.writeText(text); alert('Copycat data copiée ✅'); }
+    catch {
+      const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      alert('Copycat data copiée ✅');
+    }
+    localStorage.setItem('copycat_last', text);
+  }
+
+  async function addRow(ev){
+    if (!passFilters(ev)) return;
+
+    shown += 1; updateCounters();
+
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    const img = document.createElement('img');
+    img.className = 'token-img';
+    if (ev.image) {
+      img.src = ev.image.startsWith('ipfs://') ? 'https://ipfs.io/ipfs/' + ev.image.replace('ipfs://','') : ev.image;
+    } else if (ev.uri) {
+      getImageFromUri(ev.uri).then(src => { if (src) img.src = src; });
+    }
+    row.appendChild(img);
+
+    const info = document.createElement('div'); info.style.flex='1';
+    const title = document.createElement('div'); title.className='titleline';
+    title.textContent = (ev.name || ev.symbol || 'Token') + (ev.symbol ? ` (${ev.symbol})` : '');
+    info.appendChild(title);
+
+    const ts = ev.timestamp ? Number(ev.timestamp)*1000 : Date.now();
+    const age = Math.max(0, Math.round((Date.now()-ts)/1000));
+    const mintShort = `${ev.mint.slice(0,6)}...${ev.mint.slice(-6)}`;
+    const mcapSol = (typeof ev.marketCapSol === 'number' && !isNaN(ev.marketCapSol)) ? ev.marketCapSol : 0;
+
+    const sub = document.createElement('div'); sub.className='sub';
+    sub.innerHTML = `<span class="pill">Mint: ${mintShort}</span>
+                     <span class="pill">Age: ${age}s</span>
+                     <span class="pill">MCAP (SOL): ${mcapSol}</span>`;
+    info.appendChild(sub);
+    row.appendChild(info);
+
+    const copyBtn = document.createElement('button'); copyBtn.className='btn'; copyBtn.textContent='Copy';
+    copyBtn.onclick = async () => {
+      try { await navigator.clipboard.writeText(ev.mint); copyBtn.textContent='Copied!'; }
+      catch {
+        const ta=document.createElement('textarea'); ta.value=ev.mint; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); copyBtn.textContent='Copied!';
+      }
+      setTimeout(()=>copyBtn.textContent='Copy',1200);
+    };
+    row.appendChild(copyBtn);
+
+    const ccBtn = document.createElement('button'); ccBtn.className='btn'; ccBtn.textContent='Copycat';
+    ccBtn.onclick = ()=> copyCopycat(ev);
+    row.appendChild(ccBtn);
+
+    const open = document.createElement('a');
+    open.href = `https://pump.fun/coin/${encodeURIComponent(ev.mint)}`;
+    open.target='_blank'; open.rel='noopener'; open.className='btn'; open.textContent='Open';
+    row.appendChild(open);
+
+    list.prepend(row);
+    while(list.children.length > 300) list.removeChild(list.lastChild);
+  }
+
+  const fields = ['name','symbol','mint','uri','image','devBuy','slip','prio'].reduce((acc,id)=>{acc[id]=document.getElementById(id);return acc;},{});
+  const payloadArea = document.getElementById('payload');
+  document.getElementById('pasteBtn').onclick = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      fillFromJSON(text);
+      localStorage.setItem('copycat_last', text);
+    } catch {
+      alert('Impossible de lire le presse-papiers. Copie manuelle dans “Payload” puis “Charger sauvegarde”.');
+    }
+  };
+  document.getElementById('loadLast').onclick = () => {
+    const text = localStorage.getItem('copycat_last') || '';
+    if (!text) return alert('Aucune sauvegarde trouvée.');
+    fillFromJSON(text);
+  };
+  function fillFromJSON(text){
+    try{
+      const j = JSON.parse(text);
+      fields.name.value = j.name||'';
+      fields.symbol.value = j.symbol||'';
+      fields.mint.value = j.mint||'';
+      fields.uri.value = j.uri||'';
+      fields.image.value = j.image||'';
+      genPayload();
+    }catch{ alert('JSON invalide.'); }
+  }
+
+  function genPayload(){
+    const tokenMetadata = {
+      name: fields.name.value.trim(),
+      symbol: fields.symbol.value.trim(),
+      uri: fields.uri.value.trim()
+    };
+    const body = {
+      action: 'create',
+      tokenMetadata,
+      denominatedInSol: 'true',
+      amount: parseFloat(document.getElementById('devBuy').value || '0') || 0,
+      slippage: parseFloat(document.getElementById('slip').value || '10') || 10,
+      priorityFee: parseFloat(document.getElementById('prio').value || '0.0005') || 0.0005,
+      pool: 'pump'
+    };
+    payloadArea.value = JSON.stringify(body, null, 2);
+  }
+  document.getElementById('genPayload').onclick = genPayload;
+  document.getElementById('copyPayload').onclick = async () => {
+    try { await navigator.clipboard.writeText(payloadArea.value); alert('Payload copié ✅'); }
+    catch {
+      const ta=document.createElement('textarea'); ta.value=payloadArea.value; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Payload copié ✅');
+    }
+  };
+
+  document.getElementById('tryLaunch').onclick = async () => {
+    const body = payloadArea.value ? JSON.parse(payloadArea.value) : null;
+    if (!body) return alert('Génère d’abord le payload.');
+    try{
+      const res = await fetch('/.netlify/functions/launch', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          name: body.tokenMetadata.name,
+          symbol: body.tokenMetadata.symbol,
+          uri: body.tokenMetadata.uri,
+          devBuy: body.amount,
+          slippage: body.slippage,
+          priorityFee: body.priorityFee,
+          pool: body.pool || 'pump'
+        })
+      });
+      const json = await res.json().catch(()=>({}));
+      alert(res.ok ? ('Launched! ' + (json.signature || 'ok')) : ('Erreur: ' + JSON.stringify(json)));
+    }catch(e){ alert('Échec du lancement. Vérifie la fonction Netlify.'); }
+  };
+
+  genPayload();
+})();
+</script>
+</body>
+</html>
